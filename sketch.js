@@ -2,7 +2,8 @@
     var Engine = Matter.Engine,
     // Render = Matter.Render,
         World = Matter.World,
-        Bodies = Matter.Bodies;
+        Bodies = Matter.Bodies, 
+        Constraint = Matter.Constraint;
 
 // constants
     const width = 800;
@@ -20,14 +21,37 @@ function setup() {
     // create an engine
     engine = Engine.create();
     world = engine.world;
-    Engine.run(engine);
-    var options = {
-        isStatic: true
-    }
+    // Engine.run(engine);
+    var prev = null;
 
-    var p = new Particle(200, 100, 10)
-    particles.push(p);
+    for (var x = 200; x < width -20; x += 20) {
+
+        var fixed = false;
+        if (!prev) {
+            fixed = true;
+        }
+        var p = new Particle(x, 100, 5, fixed);
+        particles.push(p);
+        if (prev) {
+            var options = {
+                bodyA: p.body,
+                bodyB: prev.body,
+                // pointA: {
+                //     x: 0,
+                //     y: 0
+                // } ,
+                length: 20,
+                stiffness: 0.4
+            }
+        
+
+        var constraint = Constraint.create(options);
+        World.add(world, constraint);
+        }
+        prev = p;
+    }
     boundaries.push(new Boundary(width/2, height, width, 50, 0));
+
 
 
     // World.add(world, ground);
@@ -57,6 +81,9 @@ function draw() {
     for (var i = 0; i < particles.length; i++) {
         particles[i].show();
     }
+
+    // line(particles[0].body.position.x, particles[0].body.position.y, 
+    //     particles[1].body.position.x, particles[1].body.position.y);
 
     
     // console.log(particles.length, world.bodies.length);
