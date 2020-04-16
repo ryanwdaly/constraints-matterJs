@@ -1,7 +1,7 @@
 function Particle(x, y, r) {
     var options = {
         friction: 0, 
-        restitution: 0.6
+        restitution: 0.95
     }
                 //create a box (x, y, width, height)
     this.body = Bodies.circle(x, y, r, options);
