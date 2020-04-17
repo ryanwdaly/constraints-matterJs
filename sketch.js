@@ -3,7 +3,9 @@
     // Render = Matter.Render,
         World = Matter.World,
         Bodies = Matter.Bodies, 
-        Constraint = Matter.Constraint;
+        Constraint = Matter.Constraint,
+        Mouse = Matter.Mouse,
+        MouseConstraint = Matter.MouseConstraint;
 
 // constants
     const width = 800;
@@ -16,8 +18,10 @@
 
     var ground; 
 
+    var mConstraint;
+
 function setup() {
-    createCanvas(height, width);
+    var canvas = createCanvas(height, width);
     // create an engine
     engine = Engine.create();
     world = engine.world;
@@ -51,9 +55,13 @@ function setup() {
         prev = p;
     }
     boundaries.push(new Boundary(width/2, height, width, 50, 0));
-
-
-
+    var canvasMouse = Mouse.create(canvas.elt);
+    canvasMouse.pixelRation = pixelDensity();
+    var options = {
+        mouse: canvasMouse
+    }
+    mConstraint = MouseConstraint.create(engine, options)
+    World.add(world,mConstraint);
     // World.add(world, ground);
 }
 
@@ -80,6 +88,14 @@ function draw() {
 
     for (var i = 0; i < particles.length; i++) {
         particles[i].show();
+    }
+
+    if(mConstraint.body) {
+        var pos = mConstraint.body.position;
+        var offset = mConstraint.constraint.pointB;
+        var m = mConstraint.mouse.position;
+        stroke(0,255,0);
+        line(pos.x + offset.x, pos.y + offset.y, m.x, m.y);
     }
 
     // line(particles[0].body.position.x, particles[0].body.position.y, 
